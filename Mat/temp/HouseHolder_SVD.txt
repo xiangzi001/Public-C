@@ -1,0 +1,114 @@
+template<typename T>
+void HouseHolder_SVD(MAT<T>& A, MAT<T>& U, MAT<T>& V, T* ur, int n) {
+	int i, j, k;
+	int r;
+	T temp, sum, cr, hr;
+	temp = 0;
+	for (r = 0; r < n - 2; r++) {
+		sum = 0;
+		for (k = r; k < A.cols; k++)
+			sum += A[k][r] * A[k][r];
+		cr = sqrt(sum);
+		if (A[r][r] > 0.0)cr = -cr;
+		hr = cr * (cr - A[r][r]);
+		//定义ur
+		ur[r] = A[r][r] - cr;
+		for (i = r + 1; i < A.cols; i++)
+		{
+			ur[i] = A[i][r];
+		}
+		//定义U
+		for (i = 0; i < U.rows; i++)
+		{
+			sum = 0;
+			for (j = r; j < U.rows; j++)
+				sum += U[i][j] * ur[j];
+			sum = sum / hr;
+			for (j = r; j < U.cols; j++)
+			{
+				U[i][j] = U[i][j] - ur[j] * sum;
+			}
+		}
+		//定义A
+		for (j = r; j < A.cols; j++)
+		{
+			sum = 0;
+			for (i = r; i < A.rows; i++)
+				sum += A[i][j] * ur[i];
+			sum = sum / hr;
+			for (i = r; i < A.rows; i++)
+				A[i][j] = A[i][j] - ur[i] * sum;
+		}
+
+		sum = 0;
+		for (k = r + 1; k < A.cols; k++)
+			sum += A[r][k] * A[r][k];
+		cr = sqrt(sum);
+		if (A[r][r + 1] > 0.0)cr = -cr;
+		hr = cr * (cr - A[r][r + 1]);
+		//定义ur
+		ur[r + 1] = A[r][r + 1] - cr;
+		for (i = r + 2; i < A.cols; i++)
+		{
+			ur[i] = A[r][i];
+		}
+		//定义V
+		for (i = 0; i < V.rows; i++)
+		{
+			sum = 0;
+			for (j = r + 1; j < V.cols; j++)
+				sum += V[i][j] * ur[j];
+			sum = sum / hr;
+			for (j = r + 1; j < V.cols; j++)
+			{
+				V[i][j] = V[i][j] - ur[j] * sum;
+			}
+		}
+		//定义A
+		for (j = r; j < A.rows; j++)
+		{
+			sum = 0;
+			for (i = r + 1; i < A.cols; i++)
+				sum += A[j][i] * ur[i];
+			sum = sum / hr;
+			for (i = r + 1; i < A.cols; i++)
+				A[j][i] = A[j][i] - ur[i] * sum;
+		}
+	}
+	r = n-2;
+	sum = 0;
+	for (k = r; k < A.cols; k++)
+		sum += A[k][r] * A[k][r];
+	cr = sqrt(sum);
+	if (A[r][r] > 0.0)cr = -cr;
+	hr = cr * (cr - A[r][r]);
+	//定义ur
+	ur[r] = A[r][r] - cr;
+	for (i = r + 1; i < A.cols; i++)
+	{
+		ur[i] = A[i][r];
+	}
+	//定义U
+	for (i = 0; i < U.rows; i++)
+	{
+		sum = 0;
+		for (j = r; j < U.rows; j++)
+			sum += U[i][j] * ur[j];
+		sum = sum / hr;
+		for (j = r; j < U.cols; j++)
+		{
+			U[i][j] = U[i][j] - ur[j] * sum;
+		}
+	}
+	//定义A
+	for (j = r; j < A.cols; j++)
+	{
+		sum = 0;
+		for (i = r; i < A.rows; i++)
+			sum += A[i][j] * ur[i];
+		sum = sum / hr;
+		for (i = r; i < A.rows; i++)
+			A[i][j] = A[i][j] - ur[i] * sum;
+	}
+
+}
